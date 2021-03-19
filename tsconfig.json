@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["es2017"],
     "allowJs": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
-    }
   }
-  
+}

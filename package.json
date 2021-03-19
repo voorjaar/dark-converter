@@ -1,23 +1,29 @@
 {
   "name": "dark-converter",
   "version": "1.0.0",
-  "description": "",
+  "description": "Provide a simple api to convert light colors to dark colors.",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "module": "index.mjs",
+  "types": "index.d.ts",
   "devDependencies": {
     "@types/jasmine": "^3.6.7",
     "@types/node": "^14.14.35",
     "jasmine": "^3.7.0",
     "jasmine-spec-reporter": "^6.0.0",
+    "rollup": "^2.42.0",
+    "rollup-plugin-dts": "^3.0.1",
     "sucrase": "^3.17.1",
+    "tslib": "^2.1.0",
     "typescript": "^4.2.3"
   },
   "scripts": {
+    "build": "rollup -c",
     "test": "sucrase-node ./test/run.ts"
   },
   "keywords": [],
   "author": "Veritas Raven",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@rollup/plugin-typescript": "^8.2.0"
+  }
 }
