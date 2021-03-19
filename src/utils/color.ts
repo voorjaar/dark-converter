@@ -15,20 +15,20 @@ export interface HSLA {
 // https://en.wikipedia.org/wiki/HSL_and_HSV
 export function hslToRGB({h, s, l, a = 1}: HSLA): RGBA {
   if (s === 0) {
-      const [r, b, g] = [l, l, l].map((x) => Math.round(x * 255));
-      return {r, g, b, a};
+    const [r, b, g] = [l, l, l].map((x) => Math.round(x * 255));
+    return {r, g, b, a};
   }
 
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs((h / 60) % 2 - 1));
   const m = l - c / 2;
   const [r, g, b] = (
-      h < 60 ? [c, x, 0] :
-          h < 120 ? [x, c, 0] :
-              h < 180 ? [0, c, x] :
-                  h < 240 ? [0, x, c] :
-                      h < 300 ? [x, 0, c] :
-                          [c, 0, x]
+    h < 60 ? [c, x, 0] :
+      h < 120 ? [x, c, 0] :
+        h < 180 ? [0, c, x] :
+          h < 240 ? [0, x, c] :
+            h < 300 ? [x, 0, c] :
+              [c, 0, x]
   ).map((n) => Math.round((n + m) * 255));
 
   return {r, g, b, a};
@@ -46,18 +46,14 @@ export function rgbToHSL({r: r255, g: g255, b: b255, a = 1}: RGBA): HSLA {
 
   const l = (max + min) / 2;
 
-  if (c === 0) {
-      return {h: 0, s: 0, l, a};
-  }
+  if (c === 0) return {h: 0, s: 0, l, a};
 
   let h = (
-      max === r ? (((g - b) / c) % 6) :
-          max === g ? ((b - r) / c + 2) :
-              ((r - g) / c + 4)
+    max === r ? (((g - b) / c) % 6) :
+      max === g ? ((b - r) / c + 2) :
+        ((r - g) / c + 4)
   ) * 60;
-  if (h < 0) {
-      h += 360;
-  }
+  if (h < 0) h += 360;
 
   const s = c / (1 - Math.abs(2 * l - 1));
 
@@ -66,41 +62,33 @@ export function rgbToHSL({r: r255, g: g255, b: b255, a = 1}: RGBA): HSLA {
 
 function toFixed(n: number, digits = 0) {
   const fixed = n.toFixed(digits);
-  if (digits === 0) {
-      return fixed;
-  }
+  if (digits === 0) return fixed;
   const dot = fixed.indexOf('.');
   if (dot >= 0) {
-      const zerosMatch = fixed.match(/0+$/);
-      if (zerosMatch) {
-          if (zerosMatch.index === dot + 1) {
-              return fixed.substring(0, dot);
-          }
-          return fixed.substring(0, zerosMatch.index);
-      }
+    const zerosMatch = fixed.match(/0+$/);
+    if (zerosMatch) {
+      if (zerosMatch.index === dot + 1) return fixed.substring(0, dot);
+      return fixed.substring(0, zerosMatch.index);
+    }
   }
   return fixed;
 }
 
 export function rgbToString(rgb: RGBA) {
   const {r, g, b, a} = rgb;
-  if (a != null && a < 1) {
-      return `rgba(${toFixed(r)}, ${toFixed(g)}, ${toFixed(b)}, ${toFixed(a, 2)})`;
-  }
+  if (a != null && a < 1) return `rgba(${toFixed(r)}, ${toFixed(g)}, ${toFixed(b)}, ${toFixed(a, 2)})`;
   return `rgb(${toFixed(r)}, ${toFixed(g)}, ${toFixed(b)})`;
 }
 
 export function rgbToHexString({r, g, b, a}: RGBA) {
   return `#${(a != null && a < 1 ? [r, g, b, Math.round(a * 255)] : [r, g, b]).map((x) => {
-      return `${x < 16 ? '0' : ''}${x.toString(16)}`;
+    return `${x < 16 ? '0' : ''}${x.toString(16)}`;
   }).join('')}`;
 }
 
 export function hslToString(hsl: HSLA) {
   const {h, s, l, a} = hsl;
-  if (a != null && a < 1) {
-      return `hsla(${toFixed(h)}, ${toFixed(s * 100)}%, ${toFixed(l * 100)}%, ${toFixed(a, 2)})`;
-  }
+  if (a != null && a < 1) return `hsla(${toFixed(h)}, ${toFixed(s * 100)}%, ${toFixed(l * 100)}%, ${toFixed(a, 2)})`;
   return `hsl(${toFixed(h)}, ${toFixed(s * 100)}%, ${toFixed(l * 100)}%)`;
 }
 
@@ -110,31 +98,12 @@ const hexMatch = /^#[0-9a-f]+$/i;
 
 export function parse($color: string): RGBA {
   const c = $color.trim().toLowerCase();
-
-  if (c.match(rgbMatch)) {
-      return parseRGB(c);
-  }
-
-  if (c.match(hslMatch)) {
-      return parseHSL(c);
-  }
-
-  if (c.match(hexMatch)) {
-      return parseHex(c);
-  }
-
-  if (knownColors.has(c)) {
-      return getColorByName(c);
-  }
-
-  if (systemColors.has(c)) {
-      return getSystemColor(c);
-  }
-
-  if ($color === 'transparent') {
-      return {r: 0, g: 0, b: 0, a: 0};
-  }
-
+  if (c.match(rgbMatch)) return parseRGB(c);
+  if (c.match(hslMatch)) return parseHSL(c);
+  if (c.match(hexMatch)) return parseHex(c);
+  if (knownColors.has(c)) return getColorByName(c);
+  if (systemColors.has(c)) return getSystemColor(c);
+  if ($color === 'transparent') return {r: 0, g: 0, b: 0, a: 0};
   throw new Error(`Unable to parse ${$color}`);
 }
 
@@ -142,17 +111,10 @@ function getNumbersFromString(str: string, splitter: RegExp, range: number[], un
   const raw = str.split(splitter).filter((x) => x);
   const unitsList = Object.entries(units);
   const numbers = raw.map((r) => r.trim()).map((r, i) => {
-      let n: number;
-      const unit = unitsList.find(([u]) => r.endsWith(u));
-      if (unit) {
-          n = parseFloat(r.substring(0, r.length - unit[0].length)) / unit[1] * range[i];
-      } else {
-          n = parseFloat(r);
-      }
-      if (range[i] > 1) {
-          return Math.round(n);
-      }
-      return n;
+    const unit = unitsList.find(([u]) => r.endsWith(u));
+    const n = unit? parseFloat(r.substring(0, r.length - unit[0].length)) / unit[1] * range[i]: parseFloat(r);
+    if (range[i] > 1) return Math.round(n);
+    return n;
   });
   return numbers;
 }
@@ -178,18 +140,18 @@ function parseHSL($hsl: string) {
 function parseHex($hex: string) {
   const h = $hex.substring(1);
   switch (h.length) {
-      case 3:
-      case 4: {
-          const [r, g, b] = [0, 1, 2].map((i) => parseInt(`${h[i]}${h[i]}`, 16));
-          const a = h.length === 3 ? 1 : (parseInt(`${h[3]}${h[3]}`, 16) / 255);
-          return {r, g, b, a};
-      }
-      case 6:
-      case 8: {
-          const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.substring(i, i + 2), 16));
-          const a = h.length === 6 ? 1 : (parseInt(h.substring(6, 8), 16) / 255);
-          return {r, g, b, a};
-      }
+    case 3:
+    case 4: {
+      const [r, g, b] = [0, 1, 2].map((i) => parseInt(`${h[i]}${h[i]}`, 16));
+      const a = h.length === 3 ? 1 : (parseInt(`${h[3]}${h[3]}`, 16) / 255);
+      return {r, g, b, a};
+    }
+    case 6:
+    case 8: {
+      const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.substring(i, i + 2), 16));
+      const a = h.length === 6 ? 1 : (parseInt(h.substring(6, 8), 16) / 255);
+      return {r, g, b, a};
+    }
   }
   throw new Error(`Unable to parse ${$hex}`);
 }
@@ -197,20 +159,20 @@ function parseHex($hex: string) {
 function getColorByName($color: string) {
   const n = knownColors.get($color);
   return {
-      r: (n >> 16) & 255,
-      g: (n >> 8) & 255,
-      b: (n >> 0) & 255,
-      a: 1
+    r: (n >> 16) & 255,
+    g: (n >> 8) & 255,
+    b: (n >> 0) & 255,
+    a: 1
   };
 }
 
 function getSystemColor($color: string) {
   const n = systemColors.get($color);
   return {
-      r: (n >> 16) & 255,
-      g: (n >> 8) & 255,
-      b: (n >> 0) & 255,
-      a: 1
+    r: (n >> 16) & 255,
+    g: (n >> 8) & 255,
+    b: (n >> 0) & 255,
+    a: 1
   };
 }
 
